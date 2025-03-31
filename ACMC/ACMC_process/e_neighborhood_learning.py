@@ -170,7 +170,7 @@ def initialization_cut(skeleton,m,start_node):
 
 # @profile
 def ACMC_process(data, real_labels,k,users_list,min_users_num, max_users_num,max_uncertainty_num,isUpdate=True):
-    # dist_matrix = cdist(data, data)
+
     k_nearest_neighbors = k_nearest_neighbor_cal(data, k)
     skeleton, representative = graph_initialization(data)
     record = [[{"iter": 0, "interaction": 0,"constraints_num":0, "ari": 0}]]

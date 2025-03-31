@@ -104,7 +104,6 @@ def run_ACMC_thread(output_path,algo_name,large_or_small,repetitions_times,error
     return 0
 
 if __name__ == '__main__':
-
     output_path= 'output/test_common1'
     large_or_small, repetitions_times='small',1
 

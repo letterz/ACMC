@@ -89,7 +89,6 @@ def run_ACMC_process(output_path,algo_name,large_or_small,repetitions_times,erro
     return 0
 
 if __name__ == '__main__':
-
     output_path= 'output/test_2'
     large_or_small, repetitions_times='small',1
     # run_ACMC_process(output_path,'ACMC_process',large_or_small,repetitions_times
