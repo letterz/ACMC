@@ -161,7 +161,6 @@ def initialization_cut(skeleton,m,start_node):
 # @profile
 def ACMC_thread(data, real_labels,k,users_list,user_locks,min_users_num, max_users_num,max_uncertainty_num,isUpdate=True):
     # dist_matrix = cdist(data, data)
-    print(f'isUpdate={isUpdate}')
     k_nearest_neighbors = k_nearest_neighbor_cal(data, k)
     skeleton, representative = graph_initialization(data)
 

@@ -61,7 +61,7 @@ def cul_uncertainty_num(value,base,alpha):
     return num
 
 def run_ACMC_thread(output_path,algo_name,large_or_small,repetitions_times,error_span,min_users_n, max_users_n,):
-    print('----------开始执行ACDM_thread------')
+    print('----------开始执行ACMC_thread------')
     datasets = [('iris', 'iris.csv',) ]
     output_path = os.path.join(output_path,algo_name,large_or_small,)
     for index in range(0,1):
@@ -100,7 +100,7 @@ def run_ACMC_thread(output_path,algo_name,large_or_small,repetitions_times,error
             print(f'写入路径={final_path}')
             print(f'{datasets[index][0]} finish')
 
-    print('ACDM_thread 结束')
+    print('ACMC_thread 结束')
     return 0
 
 if __name__ == '__main__':
