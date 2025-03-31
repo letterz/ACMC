@@ -89,9 +89,9 @@ def get_gamma_ij(users_list, voting_result, user_locks):
             sum_one_subtrac_gamma_ij_u_multiple_Cu+=(1-voting_result[i])*users_list[i].confidence
         return sum_gamma_ij_u_multiple_Cu,sum_one_subtrac_gamma_ij_u_multiple_Cu
     gamma_ij=None
-    if zero_counts==0:
+    if zero_counts==0 and one_counts==len(voting_result):
         gamma_ij=1
-    elif one_counts==0:
+    elif one_counts==0 and zero_counts==len(voting_result):
         gamma_ij=0
     else:#大家意见不一致
         sum_of_gamma_ij_u_multiple_Cu,sum_one_subtrac_gamma_ij_u_multiple_Cu=cul_gammaij_mul_Cu_sum_and_one_minus_sum(voting_result,users_list)
