@@ -30,6 +30,7 @@ def iteration_stage_user_vote_thread(max_uncertain_xi_list, query_list_dict, use
                 query_times += len(distributed_user_list)
             with constraints_num_lock:
                 constraints_num += 1
+
             vote_0_userlist, vote_1_userlist, gamma_ij = get_gamma_ij(distributed_user_list, voting_result, user_locks)
             if gamma_ij == 0:
                 update_user_confidence_thread(distributed_user_list, punish_user_index=vote_1_userlist,
