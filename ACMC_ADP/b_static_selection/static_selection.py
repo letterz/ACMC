@@ -25,7 +25,7 @@ def sliding_window(l,center_vec_dec,theta):
             index=i
             break
     if index==None:
-        print("没有找到turning point")
+        print("no find turning point")
     else:
         centers=center_vec_dec[0:index, :][:,0].astype(int)
     if list(centers)==[]:
@@ -37,7 +37,6 @@ def sliding_window(l,center_vec_dec,theta):
 
 def neighbors_labeling(ascription_tree, neighbors):
 
-    # 删除出度边
     for i in range(len(neighbors)):
         for j in range(len(neighbors[i])):
             point=neighbors[i][j]
@@ -53,7 +52,7 @@ def neighbors_labeling(ascription_tree, neighbors):
             result=list(nx.bfs_tree(ascription_tree,point,reverse=True))
             result_dict[i]=result_dict[i]+result
     temp = {value: key for key, values in result_dict.items() for value in values}
-    # 返回预测结果
+
     predict_labels=[]
     for i in range(len(temp)):
         predict_labels.append(temp[i])
