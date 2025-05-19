@@ -82,13 +82,11 @@ def first_n_nodes_cal(my_dict,n):
 
 def result_to_csv_ACDM_thread(ARI_record, title,output_path):
     os.makedirs(output_path, exist_ok=True)
-    # 打开文件进行写入
+   
     fullpath = os.path.join(output_path, f'{title}_result.csv')
     with open(fullpath, mode='w', newline='') as file:
         writer = csv.writer(file)
-        # 写入表头
         writer.writerow(['interaction','constraints_num', 'ari'])
-        # 遍历数据并提取 'interaction' 和 'ari'，然后写入文件
         for record_group in ARI_record:
             for record in record_group:
                 interaction = record.get('interaction', None)
@@ -106,8 +104,6 @@ def neighborhood_learning(skeleton, data, predict_labels, neighborhood, k_neares
     while (True):
         candidates = uncertainty_cal(predict_labels, k_nearest_neighbors, candidates,k)
         sliced_list,candidates=first_n_nodes_cal(candidates, max_uncertainty_num)
-
-        #ensemble代码
         query_list_dict = construct_query_list_for_max_uncertain_xi_list(sliced_list, neighborhood,data)
         count = count
         constraints_num = constraints_num
@@ -117,7 +113,7 @@ def neighborhood_learning(skeleton, data, predict_labels, neighborhood, k_neares
                 sliced_list, query_list_dict, users_list, real_labels, count, neighborhood, min_users_num, max_users_num,
                 user_locks, constraints_num,pool,query_times_lock,constraints_num_lock,neighbourhoods_lock,label_dict_lock,rest_point_lock,manager,isUpdate)
         else:
-            raise RuntimeError("进程池在运行时被关闭")
+            raise RuntimeError("The process pool was closed while it was still running")
 
         if candidates == dict():
             flag = True
@@ -175,18 +171,18 @@ def ACMC_process(data, real_labels,k,users_list,min_users_num, max_users_num,max
     skeleton, representative = graph_initialization(data)
     record = [[{"iter": 0, "interaction": 0,"constraints_num":0, "ari": 0}]]
     skeleton, order = order_allocation(skeleton, representative)
-    # 共享数据结构
+ 
     manager = multiprocessing.Manager()
     query_times = manager.Value('i', 0)
     constraints_num = manager.Value('i', 0)
-    # 进程锁
+  
     user_locks = manager.dict({user.user_id: manager.Lock() for user in users_list})
     query_times_lock = manager.Lock()
     constraints_num_lock = manager.Lock()
     neighbourhoods_lock = manager.Lock()
     label_dict_lock = manager.Lock()
     rest_point_lock = manager.Lock()
-    # ------------------------------------
+
     try:
         with multiprocessing.Pool(processes=max(2, multiprocessing.cpu_count() // 2)) as pool:
             neighborhood,neighborhood_r,neighborhood_r_behind,count,order,users_list,constraints_num=neighborhood_initialization(data, order, representative, real_labels,users_list,user_locks,min_users_num,
@@ -200,21 +196,20 @@ def ACMC_process(data, real_labels,k,users_list,min_users_num, max_users_num,max
                                            real_labels, record,k,users_list,user_locks,min_users_num, max_users_num,max_uncertainty_num,constraints_num
                                            ,pool,query_times_lock,constraints_num_lock,neighbourhoods_lock,label_dict_lock,rest_point_lock,manager,isUpdate)
     except KeyboardInterrupt:
-        print("进程被中断，正在终止子进程...")
-        pool.terminate()  # 强制终止所有子进程
-        pool.join()  # 等待子进程彻底退出
-        print("子进程已终止，安全退出。")
+        pool.terminate() 
+        pool.join() 
+        
 
     except Exception as e:
-        print("发生异常:", e)
-        traceback.print_exc()  # 打印异常信息，方便调试
-        pool.terminate()  # 终止子进程，防止泄漏
+        print(e)
+        traceback.print_exc() 
+        pool.terminate() 
         pool.join()
     finally:
         if pool:
             pool.close()
             pool.join()
-        manager.shutdown()  # 释放 manager 及其管理的所有资源
+        manager.shutdown()  
     return record
 
 
