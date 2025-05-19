@@ -80,13 +80,13 @@ def first_n_nodes_cal(my_dict,n):
 
 def result_to_csv_ACDM_thread(ARI_record, title,output_path):
     os.makedirs(output_path, exist_ok=True)
-    # 打开文件进行写入
+    
     fullpath = os.path.join(output_path, f'{title}_result.csv')
     with open(fullpath, mode='w', newline='') as file:
         writer = csv.writer(file)
-        # 写入表头
+      
         writer.writerow(['interaction','constraints_num', 'ari'])
-        # 遍历数据并提取 'interaction' 和 'ari'，然后写入文件
+    
         for record_group in ARI_record:
             for record in record_group:
                 interaction = record.get('interaction', None)
@@ -167,7 +167,7 @@ def ACMC_thread(data, real_labels,k,users_list,user_locks,min_users_num, max_use
     record = [[{"iter": 0, "interaction": 0,"constraints_num":0, "ari": 0}]]
     skeleton, order = order_allocation(skeleton, representative)
 
-    #对neighborhood_initialization函数进行了多人的ensemble代码修改
+   
     neighborhood,neighborhood_r,neighborhood_r_behind,count,order,users_list,constraints_num=neighborhood_initialization(data, order, representative, real_labels,users_list,user_locks,min_users_num, max_users_num,max_uncertainty_num,isUpdate)
 
     predict_labels = influence_model_propagation(skeleton, neighborhood)
