@@ -16,13 +16,11 @@ def get_data_from_datasets(file_path):
     data_matrix = []
     with open(file_path, 'r') as file:
         for line in file:
-            # 去除行末的换行符然后以逗号分割数据
             line_data = line.strip().split(',')
-            # 将除了最后一个数据之外的数据添加到列表
             row_data = np.array([float(x) for x in line_data[:-1]])
             data_matrix.append(row_data)
             true_label.append(int(float(line_data[-1])))
-    # 转换成ndarray样式
+   
     data_matrix = np.array((data_matrix))
 
 
@@ -42,13 +40,13 @@ def record_run_time(time, dataset_name, output_path):
 
 def result_to_csv_ACMC_thread(ARI_record, title,output_path):
     os.makedirs(output_path, exist_ok=True)
-    # 打开文件进行写入
+    
     fullpath = os.path.join(output_path, f'{title}_result.csv')
     with open(fullpath, mode='w', newline='') as file:
         writer = csv.writer(file)
-        # 写入表头
+        
         writer.writerow(['interaction','constraints_num', 'ari'])
-        # 遍历数据并提取 'interaction' 和 'ari'，然后写入文件
+        
         for record_group in ARI_record:
             for record in record_group:
                 interaction = record.get('interaction', None)
@@ -61,7 +59,7 @@ def cul_uncertainty_num(value,base,alpha):
     return num
 
 def run_ACMC_thread(output_path,algo_name,large_or_small,repetitions_times,error_span,min_users_n, max_users_n,):
-    print('----------开始执行ACMC_thread------')
+    print('----------ACMC_thread------')
     datasets = [('iris', 'iris.csv',) ]
     output_path = os.path.join(output_path,algo_name,large_or_small,)
     for index in range(0,1):
@@ -72,7 +70,7 @@ def run_ACMC_thread(output_path,algo_name,large_or_small,repetitions_times,error
         data = data_preprocess(data)
         # parameters
         k = 10
-        #不确定点数目
+      
         beta=cul_uncertainty_num(data.shape[0], 2, 1,)
         usernum = beta
         print(f'k={k},isUpdate={True},max_uncertainty_num={beta},usernum={usernum},min_users_n={min_users_n}, max_users_n={max_users_n}')
@@ -82,11 +80,11 @@ def run_ACMC_thread(output_path,algo_name,large_or_small,repetitions_times,error
         min_users_num, max_users_num = min_users_n, max_users_n
         temp_output_path=os.path.join(output_path,f'error={error_rate_list[0]}_{error_rate_list[-1]}_{error_rate_list[-2]}_users={min_users_num}_{max_users_num}')
         users_list = create_some_users(usernum, error_rate_list, 1)
-        # 初始化用户锁
+       
         user_locks = {user: threading.Lock() for user in users_list}
 
         for re_times in range(0,repetitions_times):
-            print(f'第{re_times + 1}次运行{title}')
+            print(f'{re_times + 1}run {title}')
             final_path = os.path.join(temp_output_path, f'{re_times + 1}')
 
             start_time = time.time()
@@ -97,10 +95,10 @@ def run_ACMC_thread(output_path,algo_name,large_or_small,repetitions_times,error
             print(f'final ari={ARI_record[-1]}')
             record_run_time(end_time - start_time, datasets[index][0], temp_output_path)
             result_to_csv_ACMC_thread(ARI_record, datasets[index][0], final_path)
-            print(f'写入路径={final_path}')
+            print(f'path={final_path}')
             print(f'{datasets[index][0]} finish')
 
-    print('ACMC_thread 结束')
+    print('ACMC_thread finish')
     return 0
 
 if __name__ == '__main__':
