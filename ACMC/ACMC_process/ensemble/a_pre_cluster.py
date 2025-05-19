@@ -2,7 +2,7 @@
 import numpy as np
 
 from .user import user_judge_func,distribute_node_pair_to_users
-# 全局函数，不能是局部函数
+
 def process_point(i, first_point_of_nei, points_list, users_list, true_label, min_users_num, max_users_num, query_times, user_locks, constraints_num,query_times_lock,constraints_num_lock, isUpdate):
     min_max = (min(first_point_of_nei, points_list[i]), max(first_point_of_nei, points_list[i]))
     seed = hash(min_max)
@@ -41,7 +41,7 @@ def pre_cluster_user_vote_process(points_list, users_list, true_label, min_users
                 )
                 results.append((i, async_result))
 
-            # 获取所有结果
+            
             for i, async_result in results:
                 try:
                     i, result = async_result.get()
@@ -52,13 +52,13 @@ def pre_cluster_user_vote_process(points_list, users_list, true_label, min_users
                         unfind_points_list.append(points_list[i])
                 except KeyboardInterrupt:
                     print("KeyboardInterrupt detected, terminating process pool...")
-                    pool.terminate()  # 立即终止进程池
-                    pool.join()  # 等待所有进程结束
-                    raise  # 重新抛出异常，终止主程序
+                    pool.terminate()  
+                    pool.join()  
+                    raise  
 
             points_list = unfind_points_list[:]
     finally:
-        pass  # 由于 `pool` 由外部传入，不需要手动关闭
+        pass  
     return Nei, users_list, query_times.value, constraints_num.value
 
 def query_process(point_a, point_b, user_list, true_label, user_locks):
@@ -80,7 +80,7 @@ def get_gamma_ij(users_list, voting_result, user_locks):
     vote_1_userlist = [i for i, v in enumerate(voting_result) if v == 1]
 
     # ------------------------
-    # 如果约束没有发生冲突,且所有人都投must
+    # If there are no conflicts in the constraints and everyone votes "must",
     def cul_gammaij_mul_Cu_sum_and_one_minus_sum(voting_result,users_list):
         sum_gamma_ij_u_multiple_Cu = 0
         sum_one_subtrac_gamma_ij_u_multiple_Cu = 0
@@ -93,7 +93,7 @@ def get_gamma_ij(users_list, voting_result, user_locks):
         gamma_ij=1
     elif one_counts==0 and zero_counts==len(voting_result):
         gamma_ij=0
-    else:#大家意见不一致
+    else:#People have differing opinions.
         sum_of_gamma_ij_u_multiple_Cu,sum_one_subtrac_gamma_ij_u_multiple_Cu=cul_gammaij_mul_Cu_sum_and_one_minus_sum(voting_result,users_list)
         delta_ij=(one_counts*sum_of_gamma_ij_u_multiple_Cu)/(zero_counts*sum_one_subtrac_gamma_ij_u_multiple_Cu)
         gamma_ij=np.floor(2 / (1 + np.exp(1 - delta_ij)))
