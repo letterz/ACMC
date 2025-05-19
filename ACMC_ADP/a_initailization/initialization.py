@@ -10,14 +10,11 @@ from scipy.spatial import KDTree
 
 
 def dc_cal_optimized(alpha, data):
-    # 计算所有点对之间的欧几里得距离
-    distances = pdist(data)  # 直接计算距离，返回一个一维数组，长度为 n(n-1)/2
-
-    # 计算 dc 所对应的索引
+    
+    distances = pdist(data)  
     n = len(data)
     a = math.floor(0.5 * n * (n - 1) * alpha + 0.5)
 
-    # 使用 np.partition 找到第 a 小的距离
     dc = np.partition(distances, a - 1)[a - 1]
 
     # print('dc_cal_optimized finished')
@@ -25,16 +22,14 @@ def dc_cal_optimized(alpha, data):
 
 
 def local_density_cal_optimized(nearest_neighbors, data, dc):
-    # 预先计算所有点之间的欧几里得距离矩阵
-    distances = cdist(data, data)  # 距离矩阵，避免重复计算
+    distances = cdist(data, data) 
 
-    # 计算局部密度
-    density_vec = np.zeros(len(data))  # 初始化密度向量为零
+    density_vec = np.zeros(len(data)) 
 
     for i in range(len(data)):
-        neighbors = nearest_neighbors[i]  # 取出第 i 个点的邻居
-        neighbor_distances = distances[i, neighbors]  # 获取所有邻居的距离
-        density_vec[i] = np.sum(np.exp(-(neighbor_distances / dc) ** 2))  # 矢量化计算密度
+        neighbors = nearest_neighbors[i] 
+        neighbor_distances = distances[i, neighbors] 
+        density_vec[i] = np.sum(np.exp(-(neighbor_distances / dc) ** 2)) 
 
     # print('local_density_cal_optimized finished')
     return density_vec,distances
@@ -44,15 +39,14 @@ def nearest_higher_vec_optimized(density_vec, data,distances_matrix):
     distances_vec = []
 
     for i in range(n):
-        # 找出密度比当前点大的所有点的索引
         higher_density_indices = np.where(density_vec > density_vec[i])[0]
 
         if len(higher_density_indices) == 0:
-            # 如果没有密度比当前点大的点，最大距离作为默认值
+          
             max_distance = np.max(distances_matrix[i, :])
             distances_vec.append([i, -1, max_distance])
         else:
-            # 找出距离最近的密度更高的点
+          
             min_distance_index = np.argmin(distances_matrix[i, higher_density_indices])
             nearest_higher_index = higher_density_indices[min_distance_index]
             min_distance = distances_matrix[i, nearest_higher_index]
@@ -81,10 +75,9 @@ def center_probability_cal(density_vec,distances_vec):
     return center_vec
 
 def nearest_neighbors_cal_kdtree(dc, data):
-    # 1. 使用数据构建 KDTree
-    tree = KDTree(data)  # 构建 KD-Tree
 
-    # 2. 遍历每个数据点，查询其最近邻
+    tree = KDTree(data) 
+
     nearest_neighbors = [tree.query_ball_point(data[i], dc) for i in range(len(data))]
 
     # print('nearest_neighbors_cal_kdtree finished')
@@ -109,7 +102,7 @@ def initialization(alpha,data):
 
 def data_preprocess(data):
     np.random.seed(0)
-    data += np.random.rand(*data.shape) * 0.000001  # 直接在data上操作
+    data += np.random.rand(*data.shape) * 0.000001
     # print('data preprocess finished')
     return data
 
