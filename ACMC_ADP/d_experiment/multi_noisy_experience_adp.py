@@ -28,7 +28,6 @@ def experiemnt_ACMC_adp_thread(data, real_labels,alpha,l,theta,users_list,min_us
     center_vec_dec = descending_order(center_vec)
     P = sliding_window(l, center_vec_dec, theta)
 
-    # 用户轮流判断
     neighbors, users_list, count,constraints_num = pre_cluster_user_vote_thread(P, users_list,
                                                                real_labels, min_users_num, max_users_num, count,
                                                                user_locks,constraints_num,isUpdate)
@@ -38,12 +37,11 @@ def experiemnt_ACMC_adp_thread(data, real_labels,alpha,l,theta,users_list,min_us
         top_m_un_points = uncertainty_selection_optimized(predict_labels, data, neighbors, result_dict,nearest_neighbors,max_uncertain_xi_num)
 
         if len(top_m_un_points) == 0:
-            # print("查询完毕")
             break
         else:
             top_m_un_points = [int(item) for item in top_m_un_points]
         query_list_dict = construct_query_list_for_max_uncertain_xi_list(top_m_un_points, neighbors,data)
-        #用户轮流判断
+     
         neighbors, users_list, count, max_uncertain_xi_list_label_dict,constraints_num = iteration_stage_user_vote_thread(
             top_m_un_points, query_list_dict, users_list, real_labels, count, neighbors,min_users_num, max_users_num, user_locks,constraints_num,isUpdate)
 
@@ -58,7 +56,7 @@ def experiemnt_ACMC_adp_thread(data, real_labels,alpha,l,theta,users_list,min_us
 
 def result_to_csv(ARI_record, title,output_path):
     os.makedirs(output_path, exist_ok=True)
-    # 将所有的交互到加入到里面去`
+
     record = []
     for i in range(len(ARI_record)):
         if i<len(ARI_record)-1:
@@ -67,7 +65,7 @@ def result_to_csv(ARI_record, title,output_path):
                 record.append(ARI_record[i][0]["ari"])
         else:
             record.append(ARI_record[i][0]["ari"])
-    # 写入文档
+
     df = pd.DataFrame({
         'ARI': record,
     })
@@ -78,13 +76,13 @@ def get_data_from_datasets(file_path):
     data_matrix = []
     with open(file_path, 'r') as file:
         for line in file:
-            # 去除行末的换行符然后以逗号分割数据
+          
             line_data = line.strip().split(',')
-            # 将除了最后一个数据之外的数据添加到列表
+          
             row_data = np.array([float(x) for x in line_data[:-1]])
             data_matrix.append(row_data)
             true_label.append(int(float(line_data[-1])))
-    # 转换成ndarray样式
+  
     data_matrix = np.array((data_matrix))
 
 
